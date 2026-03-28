@@ -1,7 +1,18 @@
+r"""
+ __  __                           _
+|  \/  | ___ _ __ ___   ___  _ __(_)
+| |\/| |/ _ \ '_ ` _ \ / _ \| '__| |
+| |  | |  __/ | | | | | (_) | |  | |
+|_|  |_|\___|_| |_| |_|\___/|_|  |_|
+                  perfectam memoriam
+                       memorilabs.ai
+"""
+
 from __future__ import annotations
 
 import logging
-from typing import Any
+from collections.abc import Sequence
+from typing import Any, cast
 
 import faiss
 import numpy as np
@@ -17,7 +28,7 @@ def _query_dim(query_embedding: list[float]) -> int:
 
 
 def _parse_valid_embeddings(
-    embeddings: list[tuple[FactId, Any]], *, query_dim: int
+    embeddings: Sequence[tuple[FactId, Any]], *, query_dim: int
 ) -> tuple[list[np.ndarray], list[FactId]]:
     embeddings_list: list[np.ndarray] = []
     id_list: list[FactId] = []
@@ -65,10 +76,11 @@ def _faiss_search(
     faiss.normalize_L2(query_array)
 
     index = faiss.IndexFlatIP(embeddings_array.shape[1])
-    index.add(embeddings_array)  # type: ignore[call-arg]
+    typed_index = cast(Any, index)
+    typed_index.add(embeddings_array)
 
     k = min(limit, len(embeddings_array))
-    similarities, indices = index.search(query_array, k)  # type: ignore[call-arg]
+    similarities, indices = typed_index.search(query_array, k)
 
     results: list[tuple[FactId, float]] = []
     for result_idx, embedding_idx in enumerate(indices[0]):
@@ -79,7 +91,7 @@ def _faiss_search(
 
 
 def find_similar_embeddings(
-    embeddings: list[tuple[FactId, Any]],
+    embeddings: Sequence[tuple[FactId, Any]],
     query_embedding: list[float],
     limit: int = 5,
 ) -> list[tuple[FactId, float]]:

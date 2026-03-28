@@ -133,6 +133,50 @@ Use the [Dashboard](https://app.memorilabs.ai) — Memories, Analytics, Playgrou
 > Want to use your own database? Check out docs for Memori BYODB here:
 > [https://memorilabs.ai/docs/memori-byodb/](https://memorilabs.ai/docs/memori-byodb/).
 
+## LoCoMo Benchmark
+
+Memori was evaluated on the LoCoMo benchmark for long-conversation memory and achieved **81.95% overall accuracy** while using an average of **1,294 tokens per query**. That is just **4.97% of the full-context footprint**, showing that structured memory can preserve reasoning quality without forcing large prompts into every request.
+
+Compared with other retrieval-based memory systems, Memori outperformed Zep, LangMem, and Mem0 while reducing prompt size by roughly **67% vs. Zep** and lowering context cost by more than **20x vs. full-context prompting**.
+
+Read the [benchmark overview](docs/memori-cloud/benchmark/overview.mdx), see the [results](docs/memori-cloud/benchmark/results.mdx), or download the [paper](https://arxiv.org/abs/2603.19935).
+
+!["Memori's average accuracy along with the standard deviation"](https://s3.us-east-1.amazonaws.com/images.memorilabs.ai/docs/memori-locomo-benchmark.webp)
+
+## OpenClaw (Persistent Memory for Your Gateway)
+
+By default, OpenClaw agents forget everything between sessions. The Memori plugin fixes that. It captures durable facts and preferences after each conversation, then injects the most relevant context back into future prompts automatically.
+
+No changes to your agent code or prompts are required. The plugin hooks into OpenClaw's lifecycle, so you get structured memory, Intelligent Recall, and Advanced Augmentation with a drop-in plugin.
+
+```bash
+openclaw plugins install @memorilabs/openclaw-memori
+openclaw plugins enable openclaw-memori
+
+openclaw config set plugins.entries.openclaw-memori.config.apiKey "YOUR_MEMORI_API_KEY"
+openclaw config set plugins.entries.openclaw-memori.config.entityId "your-app-user-id"
+
+openclaw gateway restart
+```
+
+For setup and configuration, see the [OpenClaw Quickstart](docs/memori-cloud/openclaw/quickstart.mdx). For architecture and lifecycle details, see the [OpenClaw Overview](docs/memori-cloud/openclaw/overview.mdx).
+
+## MCP (Connect Your Agent in One Command)
+
+Your agent forgets everything between sessions. Memori fixes that. It remembers your stack, your conventions, and how you like things done so you stop repeating yourself.
+
+Works for solo developers and teams. Your agent learns coding patterns, reviewer preferences, and project conventions over time. For teams, that means shared context that new engineers pick up on day one instead of absorbing tribal knowledge over months.
+
+If you use Claude Code, Cursor, Codex, Warp, or Antigravity, you can connect Memori with no SDK integration needed:
+
+```bash
+claude mcp add --transport http memori https://api.memorilabs.ai/mcp/ \
+  --header "X-Memori-API-Key: ${MEMORI_API_KEY}" \
+  --header "X-Memori-Entity-Id: your_username" \
+  --header "X-Memori-Process-Id: claude-code"
+```
+
+For Cursor, Codex, Warp, and other clients, see the [MCP client setup guide](docs/memori-cloud/mcp/client-setup.mdx).
 
 ## Attribution
 
@@ -167,7 +211,7 @@ By default, Memori handles setting the session for you but you can start a new s
 
 ```typescript
 mem.resetSession();
-# or
+// or
 mem.setSession(sessionId);
 ```
 </details>
@@ -216,7 +260,7 @@ Memories are tracked at several different levels:
 - **process**: think your agent, LLM interaction or program
 - **session**: the current interactions between the entity, process and the LLM
 
-[Memori's Advanced Augmentation](https://github.com/MemoriLabs/Memori/blob/main/docs/advanced-augmentation.md) enhances memories at each of these levels with:
+[Memori's Advanced Augmentation](docs/memori-cloud/concepts/advanced-augmentation.mdx) enhances memories at each of these levels with:
 
 - attributes
 - events
@@ -265,7 +309,7 @@ The Memori CLI is the unified tool for managing your account, keys, and quotas a
 python -m memori
 ```
 
-This will display a menu of the available options. For more information about what you can do with the Memori CLI, please reference [Command Line Interface](https://github.com/MemoriLabs/Memori/blob/main/docs/cli.md).
+This will display a menu of the available options. For more information about what you can do with the Memori CLI, please reference [Command Line Interface](docs/memori-byodb/concepts/cli-quickstart.mdx).
 
 ## Contributing
 

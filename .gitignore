@@ -54,6 +54,7 @@ tests/examples/*
 
 # Benchmarking results
 tests/benchmarks/results/
+indexes_gemma/
 results/
 *.json
 *.csv
@@ -70,3 +71,5 @@ coverage
 !tsconfig.json
 !tsconfig.build.json
 !.prettierrc.json
+!openclaw.plugin.json
+docs/memori-cloud/mcp/use-cases.mdx
